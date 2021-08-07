@@ -32,7 +32,23 @@ catch (java.lang.ClassNotFoundException e)
 // Use it to build a query and print out the resultset.  Make sure to use PreparedStatement!
 
 // Make the connection
+String url = "jdbc:sqlserver://db:1433;DatabaseName=tempdb;";
+String uid = "SA";
+String pw = "YourStrong@Passw0rd";
 
+try ( Connection con = DriverManager.getConnection(url, uid, pw);
+      Statement stmt = con.createStatement();) 
+{		
+	ResultSet rst = stmt.executeQuery("SELECT productName , productPrice FROM product");	
+	out.println("<table><tr><th>product</th><th>price</th></tr>");	
+	while (rst.next())
+	{		out.println("<tr><td>"+rst.getString(1)+"</td>"+"<td>"+rst.getDouble(2)+"</td></tr>");
+	}
+	
+}
+catch (SQLException ex) 
+{ 	out.println(ex); 
+}
 // Print out the ResultSet
 
 // For each product create a link of the form
