@@ -22,7 +22,7 @@ catch (java.lang.ClassNotFoundException e)
 }
 
 // Useful code for formatting currency values:
-// NumberFormat currFormat = NumberFormat.getCurrencyInstance();
+//NumberFormat currFormat = NumberFormat.getCurrencyInstance();
 // out.println(currFormat.format(5.0);  // Prints $5.00
 
 // Make connection
