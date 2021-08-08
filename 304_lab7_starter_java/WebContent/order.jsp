@@ -1,5 +1,5 @@
 <%@ page import="java.sql.*" %>
-<%@ page import="java.text.NumberFormat" %>
+<%@ page import="java.text.NumberFormat, java.util.Locale" %>
 <%@ page import="java.util.HashMap" %>
 <%@ page import="java.util.Iterator" %>
 <%@ page import="java.util.ArrayList" %>
@@ -15,25 +15,66 @@
 <% 
 // Get customer id
 String custId = request.getParameter("customerId");
-@SuppressWarnings({"unchecked"})
+int cid;
+try{
+cid = Integer.valueOf(custId);
+} catch (NumberFormatException e){
+	out.println("invalid customer Id, please go back a page and enter a correct ID");
+}
 HashMap<String, ArrayList<Object>> productList = (HashMap<String, ArrayList<Object>>) session.getAttribute("productList");
 
 // Determine if valid customer id was entered
-// Determine if there are products in the shopping cart
-// If either are not true, display an error message
 
-// Make connection
+if(cid < 0 || cid > 5 ){
+	out.println("incorrect customer Id, please enter a valid customer ID");
+	//determine if  there are products in shopping cart
+} else if (productList == null){
+	out.println("There are no items in your shopping cart");
+} else {
+	String url = "jdbc:sqlserver://db:1433;DatabaseName=tempdb;";
+	String uid = "SA";
+	String pw = "YourStrong@Passw0rd";
+	NumberFormat currFormat = NumberFormat.getCurrencyInstance(Locale.US);
 
-// Save order information to database
+	// Save order information to database
+	//Use retrieval of auto-generated keys.
 
+	String sql = "INSERT INTO OrderSummary (orderId, customerId) VALUES (?, ?);";
+	
+	try
+		{    // Load driver class
+   		Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
 
-	/*
-	// Use retrieval of auto-generated keys.
-	PreparedStatement pstmt = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);			
-	ResultSet keys = pstmt.getGeneratedKeys();
-	keys.next();
-	int orderId = keys.getInt(1);
-	*/
+	}
+	catch (java.lang.ClassNotFoundException e)
+		{
+    	out.println("ClassNotFoundException: " +e);
+	}
+
+	try(Connection con = DriverManager.getConnection(url, uid, pw); Statement stmt = con.createStatement();){
+		PreparedStatement pstmt = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+		ResultSet keys = pstmt.getGeneratedKeys();
+		keys.next();
+		int orderId = keys.getInt(1);
+		
+		// Each entry in the HashMap is an ArrayList with item 0-id, 1-name, 2-quantity, 3-price
+		Iterator<Map.Entry<String, ArrayList<Object>>> iterator = productList.entrySet().iterator();
+			while (iterator.hasNext())
+			{ 
+				Map.Entry<String, ArrayList<Object>> entry = iterator.next();
+				ArrayList<Object> product = (ArrayList<Object>) entry.getValue();
+				int productId = (Integer) product.get(0);
+				String price = (String) product.get(2);
+				double pr = Double.parseDouble(price);
+				int qty = ( (Integer)product.get(3)).intValue();
+
+				sql = "INSERT INTO OrderProduct VALUES (?, ?, ?, ?)";
+				pstmt = con.prepareStatement(sql, orderId, productId, qty, pr);
+
+				ResultSet rst2 = pstmt.executeQuery();
+				con.commit();	
+			}
+}
 
 // Insert each item into OrderProduct table using OrderId from previous INSERT
 
@@ -59,6 +100,7 @@ HashMap<String, ArrayList<Object>> productList = (HashMap<String, ArrayList<Obje
 // Print out order summary
 
 // Clear cart if order placed successfully
+}
 %>
 </BODY>
 </HTML>
