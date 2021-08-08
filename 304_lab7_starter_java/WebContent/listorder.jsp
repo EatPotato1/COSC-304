@@ -1,5 +1,5 @@
 <%@ page import="java.sql.*" %>
-<%@ page import="java.text.NumberFormat" %>
+<%@ page import="java.text.NumberFormat, java.util.Locale" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF8"%>
 <!DOCTYPE html>
 <html>
@@ -12,6 +12,13 @@
 
 <%
 //Note: Forces loading of SQL Server driver
+
+String sql = "SELECT orderId, O.customerId, totalAmount, firstName + ' ' + lastName, orderDate FROM ordersummary O JOIN customer C ON (O.customerId = C.customerId)";
+String url = "jdbc:sqlserver://db:1433;DatabaseName=tempdb;";
+String uid = "SA";
+String pw = "YourStrong@Passw0rd";
+NumberFormat currFormat = NumberFormat.getCurrencyInstance(Locale.US);
+
 try
 {	// Load driver class
 	Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
@@ -21,8 +28,6 @@ catch (java.lang.ClassNotFoundException e)
 	out.println("ClassNotFoundException: " +e);
 }
 
-<<<<<<< Updated upstream
-=======
 try (Connection con = DriverManager.getConnection(url, uid, pw);
 	Statement stmt = con.createStatement();)
 
@@ -31,7 +36,7 @@ try (Connection con = DriverManager.getConnection(url, uid, pw);
 	out.println("<table border=\"1\"><tr><td>Order Id</td><td>Order Date</td><td>Customer Id</td><td>Customer Name</td><td>Total Amount</td></tr>");
 
 
-	sql = "SELECT O.productId, O.quantity, (P.productPrice * O.quantity) AS price FROM OrderProduct O JOIN product P ON (O.productId = P.productId) WHERE orderId = ?";
+	sql = "SELECT O.productId, O.quantity, (P.productPrice * O.quantity) FROM OrderProduct O JOIN product P ON (O.productId = P.productId) WHERE orderId = ?";
 	PreparedStatement pstmt = con.prepareStatement(sql);
 	while(rst.next()){
 		int orderId = rst.getInt(1);
@@ -51,7 +56,7 @@ try (Connection con = DriverManager.getConnection(url, uid, pw);
 		while(rst2.next()){
 			out.print("<tr><td>" + rst2.getInt(1) + "</td>");
 			out.print("<td>" + rst2.getInt(2) + "</td>");
-			out.print("<td>" + currFormat.format(rst.getDouble(3)) + "</td></tr>");
+			out.print("<td>" + currFormat.format(rst2.getDouble(3)) + "</td></tr>");
 
 		}
 		out.println("</table></td></tr>");
@@ -66,7 +71,6 @@ try (Connection con = DriverManager.getConnection(url, uid, pw);
 
 
 
->>>>>>> Stashed changes
 // Useful code for formatting currency values:
 // NumberFormat currFormat = NumberFormat.getCurrencyInstance();
 // out.println(currFormat.format(5.0);  // Prints $5.00
