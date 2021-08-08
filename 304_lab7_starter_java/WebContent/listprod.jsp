@@ -62,3 +62,5 @@ catch (SQLException ex)
 
 </body>
 </html>
+
+out.println("<tr><td><a href="addcart.jsp?id=" + rst.getInt(1) + "&name=" + rst.getString(2) + "&price=" + rst.getDouble(3) + "">Add to Cart</a></td>"+"<td>"+rst.getString(1)+"</td>"+"<td>"+rst.getDouble(2)+"</td></tr>");
