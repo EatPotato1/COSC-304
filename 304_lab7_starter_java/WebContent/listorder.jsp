@@ -21,6 +21,52 @@ catch (java.lang.ClassNotFoundException e)
 	out.println("ClassNotFoundException: " +e);
 }
 
+<<<<<<< Updated upstream
+=======
+try (Connection con = DriverManager.getConnection(url, uid, pw);
+	Statement stmt = con.createStatement();)
+
+{
+	ResultSet rst = stmt.executeQuery(sql);
+	out.println("<table border=\"1\"><tr><td>Order Id</td><td>Order Date</td><td>Customer Id</td><td>Customer Name</td><td>Total Amount</td></tr>");
+
+
+	sql = "SELECT O.productId, O.quantity, (P.productPrice * O.quantity) AS price FROM OrderProduct O JOIN product P ON (O.productId = P.productId) WHERE orderId = ?";
+	PreparedStatement pstmt = con.prepareStatement(sql);
+	while(rst.next()){
+		int orderId = rst.getInt(1);
+		out.print("<tr><td>" + rst.getInt(1) + "</td>");
+		out.print("<td>" + rst.getString(5) + "</td>");
+		out.print("<td>" + rst.getInt(2) + "</td>");
+		out.print("<td>" + rst.getString(4) + "</td>");
+		out.print("<td>" + currFormat.format(rst.getDouble(3)) + "</td>");
+		out.println("</tr>");
+
+		pstmt.setInt(1, orderId);
+		ResultSet rst2 = pstmt.executeQuery();
+
+		out.println("<tr align=\"right\"><td colspan=\"4\"><table border=\"1\">");
+		out.println("<th>Product Id</th> <th>Quantity</th> <th>Price </th></tr>");
+		
+		while(rst2.next()){
+			out.print("<tr><td>" + rst2.getInt(1) + "</td>");
+			out.print("<td>" + rst2.getInt(2) + "</td>");
+			out.print("<td>" + currFormat.format(rst.getDouble(3)) + "</td></tr>");
+
+		}
+		out.println("</table></td></tr>");
+	}
+	out.println("</table>");
+	}
+
+	catch(SQLException ex){
+		out.println(ex);
+	}
+
+
+
+
+>>>>>>> Stashed changes
 // Useful code for formatting currency values:
 // NumberFormat currFormat = NumberFormat.getCurrencyInstance();
 // out.println(currFormat.format(5.0);  // Prints $5.00
