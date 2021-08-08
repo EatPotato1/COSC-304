@@ -25,12 +25,12 @@ HashMap<String, ArrayList<Object>> productList = (HashMap<String, ArrayList<Obje
 
 // Determine if valid customer id was entered
 
-if(cid < 0 || cid > 5 ){
-	out.println("incorrect customer Id, please enter a valid customer ID");
-	//determine if  there are products in shopping cart
-} else if (productList == null){
-	out.println("There are no items in your shopping cart");
-} else {
+//if(cid < 0 || cid > 5 ){
+//	out.println("incorrect customer Id, please enter a valid customer ID");
+//	//determine if  there are products in shopping cart
+//} else if (productList == null){
+//	out.println("There are no items in your shopping cart");
+//} else {
 	String url = "jdbc:sqlserver://db:1433;DatabaseName=tempdb;";
 	String uid = "SA";
 	String pw = "YourStrong@Passw0rd";
@@ -56,7 +56,7 @@ if(cid < 0 || cid > 5 ){
 		ResultSet keys = pstmt.getGeneratedKeys();
 		keys.next();
 		int orderId = keys.getInt(1);
-		
+		double total = 0;
 		// Each entry in the HashMap is an ArrayList with item 0-id, 1-name, 2-quantity, 3-price
 		Iterator<Map.Entry<String, ArrayList<Object>>> iterator = productList.entrySet().iterator();
 			while (iterator.hasNext())
@@ -67,13 +67,26 @@ if(cid < 0 || cid > 5 ){
 				String price = (String) product.get(2);
 				double pr = Double.parseDouble(price);
 				int qty = ( (Integer)product.get(3)).intValue();
-
-				sql = "INSERT INTO OrderProduct VALUES (?, ?, ?, ?)";
-				pstmt = con.prepareStatement(sql, orderId, productId, qty, pr);
+				total = total + pr*qty;
+				sql = "INSERT INTO OrderProduct (orderId, productId, quantity, price) VALUES(?,?,?,?)";
+				pstmt = con.prepareStatement(sql);
+                pstmt.setInt(1, orderId);
+                pstmt.setInt(2, productId);
+                pstmt.setInt(3, qty);
+                pstmt.setString(4, price);
+                pstmt.executeUpdate();
 
 				ResultSet rst2 = pstmt.executeQuery();
 				con.commit();	
 			}
+			out.println("</table>");
+			sql = "UPDATE OrderSummary SET totalAmount = ? WHERE orderId = ?";
+            pstmt = con.prepareStatement(sql);
+            pstmt.setDouble(1, total);
+            pstmt.setInt(2, orderId);
+            pstmt.executeUpdate();
+			out.println("<h1>Order Completed. Will be shipped soon...</h1>");
+
 }
 
 // Insert each item into OrderProduct table using OrderId from previous INSERT
@@ -100,7 +113,7 @@ if(cid < 0 || cid > 5 ){
 // Print out order summary
 
 // Clear cart if order placed successfully
-}
+//}
 %>
 </BODY>
 </HTML>
