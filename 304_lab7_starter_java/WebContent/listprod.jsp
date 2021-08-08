@@ -64,7 +64,7 @@ try ( Connection con = DriverManager.getConnection(url, uid, pw);)
 		pstmt.setString(1, name);
 
 	ResultSet rst = pstmt.executeQuery();	
-	out.println("<table><tr><th>Product Name</th><th>Price</th></tr>");	
+	out.println("<table><tr><th> </th><th>Product Name</th><th>Price</th></tr>");	
 	while (rst.next())
 	{		
 		//out.println("<tr></td><a href=\"addcart.jsp?id=" + rst.getInt(1) + "&name=" + rst.getString(2) + "&price=" + rst.getDouble(3) + "\">Add to Cart</a></td>");
