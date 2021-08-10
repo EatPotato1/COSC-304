@@ -32,8 +32,7 @@ catch (java.lang.ClassNotFoundException e)
 
 try (Connection con = DriverManager.getConnection(url, uid, pw);) {
 
-
-	// TODO: Get order id atm just set to 1 for testing purposes
+	// TODO: Get order id atm just set to 1 for testing purposes still needs to be implemented to have oid not be just 1
 	int oid = 1;
           
 	// TODO: Check if valid order id
@@ -48,17 +47,18 @@ try (Connection con = DriverManager.getConnection(url, uid, pw);) {
 	
 
 	// TODO: Start a transaction (turn-off auto-commit)
-	//con.setAutocommit(false);
+	con.setAutoCommit(false);
 
 	// TODO: Retrieve all items in order with given id
 	//sql = "SELECT "
 
-	// TODO: Create a new shipment record.
+	// TODO: Create a new shipment record. getting shipment date
 	long milis = System.currentTimeMillis();
 	java.sql.Date date = new java.sql.Date(milis);
 
-	String record = "INSERT INTO shipment (warehouseId) VALUES (?, ?)";
-	pstmt = con.prepareStatement(record, 1, Statement.RETURN_GENERATED_KEYS);
+	String record = "INSERT INTO shipment (warehouseId) VALUES (?)";
+	pstmt = con.prepareStatement(record, Statement.RETURN_GENERATED_KEYS); // this isnt working right now, 
+	pstmt.setInt(1, 1);
 	pstmt.executeUpdate();
 	ResultSet keys = pstmt.getGeneratedKeys();
 	keys.next();
@@ -91,21 +91,31 @@ try (Connection con = DriverManager.getConnection(url, uid, pw);) {
 			pstmt = con.prepareStatement(sql, productId);
 			ResultSet rst = pstmt.executeQuery();
 
+			// TODO: If any item does not have sufficient inventory, cancel transaction and rollback. Otherwise, update inventory for each item.
 			//iterate through the items for now
 			while(rst.next()){
+
+				if(qty > rst.getInt(2)) {
+					out.println("there is insufficient inventory for product ID " + productId);
+					return;
+				}
+
 				String statement = "Ordered product: ? Qty: ? Previous inventory: ? New inventory: ?";
+				pstmt = con.prepareStatement(statement, productId, qty, rst.getInt(2));
+				out.println(pstmt);
 			}	
 		}
 
-	// TODO: If any item does not have sufficient inventory, cancel transaction and rollback. Otherwise, update inventory for each item.
-}	
+	
+		// TODO: Auto-commit should be turned back on
+		con.setAutoCommit(true);
 
+}	
 catch(SQLException ex){
 	out.println(ex);
 	//con.rollback();
 }	
-// TODO: Auto-commit should be turned back on
-	//con.setAutocommit(true);
+
 
 %>                       				
 
