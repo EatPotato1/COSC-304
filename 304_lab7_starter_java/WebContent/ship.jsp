@@ -35,15 +35,25 @@ catch (java.lang.ClassNotFoundException e)
 try (Connection con = DriverManager.getConnection(url, uid, pw);) {
 
 	// TODO: Get order id atm just set to 1 for testing purposes still needs to be implemented to have oid not be just 1
-	int oid = 1;
+	String orderID = request.getParameter("orderId");
+	int oid = -1;
           
 	// TODO: Check if valid order id
+
+	try{
+		oid = Integer.parseInt(orderID);
+	}
+	catch (Exception e){
+		out.println("<h1>invalid Order ID, please return to the previous page and input a correct order ID</h1>");
+		return;
+	}
+
 	String sql = "SELECT orderId FROM ordersummary where orderId = ?";
 	PreparedStatement pstmt = con.prepareStatement(sql);
 	pstmt.setInt(1, oid);
 	ResultSet validOID = pstmt.executeQuery();
 	if (!validOID.next()){
-		out.println("invalid Order ID, please return to the previous page and input a correct order ID");
+		out.println("<h1>invalid Order ID, please return to the previous page and input a correct order ID</h1>");
 		return;
 	}
 	
@@ -51,8 +61,7 @@ try (Connection con = DriverManager.getConnection(url, uid, pw);) {
 	// TODO: Start a transaction (turn-off auto-commit)
 	con.setAutoCommit(false);
 
-	// TODO: Retrieve all items in order with given id
-	//sql = "SELECT "
+
 
 	// TODO: Create a new shipment record. getting shipment date
 	long milis = System.currentTimeMillis();
@@ -68,13 +77,8 @@ try (Connection con = DriverManager.getConnection(url, uid, pw);) {
 	int shipmentid = keys.getInt(1);
 
 	// TODO: For each item verify sufficient quantity available in warehouse 1.
-	//shipment = "UPDATE shipment SET shipmentDate = ?, warehouseID = 1 WHERE shipmentId = ?";
 	
-	//getting the current date
-	
-
-	//pstmt = con.prepareStatement(shipment, date, shipmentid);
-
+	// TODO: Retrieve all items in order with given id
 	// Each entry in the HashMap is an ArrayList with item 0-id, 1-name, 2-quantity, 3-price
 		
 		Iterator<Map.Entry<String, ArrayList<Object>>> iterator = productList.entrySet().iterator();
@@ -85,8 +89,6 @@ try (Connection con = DriverManager.getConnection(url, uid, pw);) {
 			ArrayList<Object> product = (ArrayList<Object>) entry.getValue();
 			String prodId = (String) product.get(0);
 			int productId = Integer.valueOf(prodId);
-			String price = (String) product.get(2);
-			double pr = Double.parseDouble(price);
 			int qty = ((Integer)product.get(3)).intValue();
 			
 			//find warehouse information 
@@ -102,11 +104,16 @@ try (Connection con = DriverManager.getConnection(url, uid, pw);) {
 				if(qty > rst.getInt(2)) {
 					out.println("<h1>there is insufficient inventory for product ID " + productId + "</h1>");
 					return;
+					con.rollback();
+				} else{
+					sql = "UPDATE warehouse SET quantity = (quantity - ?) WHERE productId = ? AND warehouseId = 1";
+					pstmt = con.prepareStatement(sql, qty, rst.getInt(1));
+					pstmt.executeUpdate();
 				}
 
 				String statement = "Ordered product: ? Qty: ? Previous inventory: ? New inventory: ?";
-				pstmt = con.prepareStatement(statement, productId, qty, rst.getInt(2));
-				out.println(pstmt);
+				pstmt = con.prepareStatement(statement, productId, rst.getInt(2), (rst.getInt(2) - qty));
+				out.println("<h1>" + pstmt + "</h1>");
 			}	
 		}
 
