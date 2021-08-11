@@ -1,7 +1,7 @@
 <%@ page import="java.util.HashMap" %>
 <%@ page import="java.util.Iterator" %>
 <%@ page import="java.util.ArrayList" %>
-<%@ page import="java.text.NumberFormat" %>
+<%@ page import="java.text.NumberFormat,  java.util.Locale" %>
 <%@ page import="java.util.Map" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF8"%>
 <!DOCTYPE html>
@@ -22,7 +22,7 @@ if (productList == null)
 }
 else
 {
-	NumberFormat currFormat = NumberFormat.getCurrencyInstance();
+	NumberFormat currFormat = NumberFormat.getCurrencyInstance(Locale.US);
 
 	out.println("<h1>Your Shopping Cart</h1>");
 	out.print("<table><tr><th>Product Id</th><th>Product Name</th><th>Quantity</th>");

@@ -21,6 +21,8 @@ String url = "jdbc:sqlserver://db:1433;DatabaseName=tempdb;";
 String uid = "SA";
 String pw = "YourStrong@Passw0rd";
 
+HashMap<String, ArrayList<Object>> productList = (HashMap<String, ArrayList<Object>>) session.getAttribute("productList");
+
 try
 {	// Load driver class
 	Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
@@ -56,14 +58,14 @@ try (Connection con = DriverManager.getConnection(url, uid, pw);) {
 	long milis = System.currentTimeMillis();
 	java.sql.Date date = new java.sql.Date(milis);
 
-	String record = "INSERT INTO shipment (warehouseId) VALUES (?)";
-	pstmt = con.prepareStatement(record, Statement.RETURN_GENERATED_KEYS); // this isnt working right now, 
-	pstmt.setInt(1, 1);
+	//String record = "INSERT INTO shipment (shipmentDate, warehouseId) VALUES (?, 1)"; // this isnt working right now, warehouse in DDL doesnt have any values
+	String record = "INSERT INTO shipment (shipmentDate) VALUES (?)";
+	pstmt = con.prepareStatement(record, Statement.RETURN_GENERATED_KEYS); 
+	pstmt.setTimestamp(1, new java.sql.Timestamp(new Date().getTime()));	
 	pstmt.executeUpdate();
 	ResultSet keys = pstmt.getGeneratedKeys();
 	keys.next();
 	int shipmentid = keys.getInt(1);
-	out.println(shipmentid);
 
 	// TODO: For each item verify sufficient quantity available in warehouse 1.
 	//shipment = "UPDATE shipment SET shipmentDate = ?, warehouseID = 1 WHERE shipmentId = ?";
@@ -74,21 +76,23 @@ try (Connection con = DriverManager.getConnection(url, uid, pw);) {
 	//pstmt = con.prepareStatement(shipment, date, shipmentid);
 
 	// Each entry in the HashMap is an ArrayList with item 0-id, 1-name, 2-quantity, 3-price
-		HashMap<String, ArrayList<Object>> productList = (HashMap<String, ArrayList<Object>>) session.getAttribute("productList");
+		
 		Iterator<Map.Entry<String, ArrayList<Object>>> iterator = productList.entrySet().iterator();
 
 		while (iterator.hasNext())
 		{ 
 			Map.Entry<String, ArrayList<Object>> entry = iterator.next();
 			ArrayList<Object> product = (ArrayList<Object>) entry.getValue();
-			int productId = (int)product.get(0);
+			String prodId = (String) product.get(0);
+			int productId = Integer.valueOf(prodId);
 			String price = (String) product.get(2);
 			double pr = Double.parseDouble(price);
 			int qty = ((Integer)product.get(3)).intValue();
 			
 			//find warehouse information 
 			sql = "SELECT productId, quantity FROM productinventory WHERE productId = ? AND warehouseId = 1";
-			pstmt = con.prepareStatement(sql, productId);
+			pstmt = con.prepareStatement(sql);
+			pstmt.setInt(1, productId);
 			ResultSet rst = pstmt.executeQuery();
 
 			// TODO: If any item does not have sufficient inventory, cancel transaction and rollback. Otherwise, update inventory for each item.
@@ -96,7 +100,7 @@ try (Connection con = DriverManager.getConnection(url, uid, pw);) {
 			while(rst.next()){
 
 				if(qty > rst.getInt(2)) {
-					out.println("there is insufficient inventory for product ID " + productId);
+					out.println("<h1>there is insufficient inventory for product ID " + productId + "</h1>");
 					return;
 				}
 
@@ -106,16 +110,16 @@ try (Connection con = DriverManager.getConnection(url, uid, pw);) {
 			}	
 		}
 
-	
+		con.commit();
 		// TODO: Auto-commit should be turned back on
 		con.setAutoCommit(true);
+		con.close();
 
 }	
 catch(SQLException ex){
 	out.println(ex);
 	//con.rollback();
 }	
-
 
 %>                       				
 
