@@ -19,6 +19,7 @@ String sql = "Select customerId, firstName, lastName, email, phonenum, address, 
 PreparedStatement pt1 = con.prepareStatement(sql);
 pt1.setString(1,userName);
 ResultSet rs1 = pt1.executeQuery();
+
 while(rs1.next()){
 	out.println("<table><tr><th>customerId</th><td>"+rs1.getInt(1)+"</td></tr>");
 	out.println("<tr><th>FirstName</th><td>"+rs1.getString(2)+"</td></tr>");
@@ -32,6 +33,7 @@ while(rs1.next()){
 	out.println("<tr><th>Country</th><td>"+rs1.getString(10)+"</td></tr>");
 	out.println("<tr><th>Userid</th><td>"+rs1.getString(11)+"</td></tr>");
 }
+
 out.println("</table>");
 con.close();
 // Make sure to close connection

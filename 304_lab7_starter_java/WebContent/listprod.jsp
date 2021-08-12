@@ -25,12 +25,12 @@ if(name == null)
 
 if(name.equals("")){
 	out.println("<h2>All Products</h2>");
-	sql = "SELECT productId, productName, productPrice FROM Product";
+	sql = "SELECT productId, productName, productPrice, categoryName FROM Product JOIN category ON product.categoryId=category.categoryId";
 		
 }else{
 	out.println("<h2>Products containing '" + name + "'</h2>");
 	hasParameter = true;
-	sql = "SELECT productId, productName, productPrice FROM Product WHERE productName LIKE ?";
+	sql = "SELECT productId, productName, productPrice, categoryName FROM Product JOIN category ON product.categoryId=category.categoryId WHERE productName LIKE ?";
 	name = '%' + name + '%';
 }
 
@@ -64,11 +64,10 @@ try ( Connection con = DriverManager.getConnection(url, uid, pw);)
 		pstmt.setString(1, name);
 
 	ResultSet rst = pstmt.executeQuery();	
-	out.println("<table><tr><th> </th><th>Product Name</th><th>Price</th></tr>");	
+	out.println("<table><tr><th> </th><th>Product Name</th><th>Category</th><th>Price</th></tr>");	
 	while (rst.next())
 	{		
-		//out.println("<tr></td><a href=\"addcart.jsp?id=" + rst.getInt(1) + "&name=" + rst.getString(2) + "&price=" + rst.getDouble(3) + "\">Add to Cart</a></td>");
-		out.println("<tr><td><a href=\"addcart.jsp?id=" + rst.getInt(1) + "&name=" + rst.getString(2) + "&price=" + rst.getDouble(3) + "\">Add to Cart</a></td>" + "<td>" + rst.getString(2) + "</td>" + "<td>" + currFormat.format(rst.getDouble(3)) + "</td></tr>");
+		out.println("<tr><td><a href=\"addcart.jsp?id=" + rst.getInt(1) + "&name=" + rst.getString(2) + "&price=" + rst.getDouble(3) + "\">Add to Cart</a></td><td><a href=\"product.jsp?id=" + rst.getInt(1) + "\">"+ rst.getString(2) + "</a></td><td>" +  rst.getString(4) + "</td><td>" +currFormat.format(rst.getDouble(3)) +"</td></tr>");
 
 	}
 	out.println("</table>");
