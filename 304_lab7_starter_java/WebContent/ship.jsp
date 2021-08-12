@@ -34,7 +34,7 @@ catch (java.lang.ClassNotFoundException e)
 
 try (Connection con = DriverManager.getConnection(url, uid, pw);) {
 
-	// TODO: Get order id atm just set to 1 for testing purposes still needs to be implemented to have oid not be just 1
+	// TODO: Get order id 
 	String orderID = request.getParameter("orderId");
 	int oid = -1;
           
@@ -67,8 +67,9 @@ try (Connection con = DriverManager.getConnection(url, uid, pw);) {
 	long milis = System.currentTimeMillis();
 	java.sql.Date date = new java.sql.Date(milis);
 
-	//String record = "INSERT INTO shipment (shipmentDate, warehouseId) VALUES (?, 1)"; // this isnt working right now, warehouse in DDL doesnt have any values
-	String record = "INSERT INTO shipment (shipmentDate) VALUES (?)";
+	// this isnt working right now, warehouse in DDL doesnt have any values
+	String record = "INSERT INTO shipment (shipmentDate, warehouseId) VALUES (?, 1)"; 
+	
 	pstmt = con.prepareStatement(record, Statement.RETURN_GENERATED_KEYS); 
 	pstmt.setTimestamp(1, new java.sql.Timestamp(new Date().getTime()));	
 	pstmt.executeUpdate();
@@ -125,7 +126,7 @@ try (Connection con = DriverManager.getConnection(url, uid, pw);) {
 }	
 catch(SQLException ex){
 	out.println(ex);
-	//con.rollback();
+	con.rollback();
 }	
 
 %>                       				
