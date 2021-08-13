@@ -1,5 +1,5 @@
 <%@ page import="java.util.HashMap" %>
-<%@ page import="java.text.NumberFormat" %>
+<%@ page import="java.text.NumberFormat, java.util.Locale" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF8"%>
 <%@ include file="jdbc.jsp" %>
 
@@ -95,7 +95,7 @@ else
 
 out.println(filter);
 
-NumberFormat currFormat = NumberFormat.getCurrencyInstance();
+NumberFormat currFormat = NumberFormat.getCurrencyInstance(Locale.US);
 
 try 
 {

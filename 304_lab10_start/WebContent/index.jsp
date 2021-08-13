@@ -19,19 +19,10 @@
 <h2 align="center"><a href="logout.jsp">Log out</a></h2>
 
 <%
-Object authUser = session.getAttribute("authenticatedUser");
-boolean authenticated = authUser == null ? false : true;
-   if (!authenticated)
-{
-String loginMessage = (String)authUser+" have not been authorized to "+
-" access the URL "+request.getRequestURL().toString(); 
-session.setAttribute("loginMessage",loginMessage); 
-response.sendRedirect("login.jsp");
-return;
-}else{
-    out.println("<div align="center">Signed in as " +(String)authUser + "</div>");
-    //<h2 align="center">Log out</a></h2>
-}%>
+	String userName = (String) session.getAttribute("authenticatedUser");
+	if (userName != null)
+		out.println("<h3 align=\"center\">Signed in as: "+userName+"</h3>");
+%>
 </body>
 </head>
 

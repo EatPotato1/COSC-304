@@ -1,4 +1,3 @@
-  
 <!DOCTYPE html>
 <html>
 <head>
@@ -7,37 +6,55 @@
 <body>
 
 <%@ include file="auth.jsp"%>
-<%@ page import="java.text.NumberFormat" %>
+<%@ page import="java.text.NumberFormat, java.util.Locale" %>
 <%@ include file="jdbc.jsp" %>
+
 <%
 	String userName = (String) session.getAttribute("authenticatedUser");
 %>
 
 <%
-// TODO: Print Customer information
-String sql = "Select customerId, firstName, lastName, email, phonenum, address, city, state, postalCode, country, userid From customer where customerId =?";
-PreparedStatement pt1 = con.prepareStatement(sql);
-pt1.setString(1,userName);
-ResultSet rs1 = pt1.executeQuery();
 
-while(rs1.next()){
-	out.println("<table><tr><th>customerId</th><td>"+rs1.getInt(1)+"</td></tr>");
-	out.println("<tr><th>FirstName</th><td>"+rs1.getString(2)+"</td></tr>");
-	out.println("<tr><th>LastName</th><td>"+rs1.getString(3)+"</td></tr>");
-	out.println("<tr><th>Email</th><td>"+rs1.getString(4)+"</td></tr>");
-	out.println("<tr><th>Phone number</th><td>"+rs1.getString(5)+"</td></tr>");
-	out.println("<tr><th>address</th><td>"+rs1.getString(6)+"</td></tr>");
-	out.println("<tr><th>City</th><td>"+rs1.getString(7)+"</td></tr>");
-	out.println("<tr><th>State</th><td>"+rs1.getString(8)+"</td></tr>");
-	out.println("<tr><th>Postal code</th><td>"+rs1.getString(9)+"</td></tr>");
-	out.println("<tr><th>Country</th><td>"+rs1.getString(10)+"</td></tr>");
-	out.println("<tr><th>Userid</th><td>"+rs1.getString(11)+"</td></tr>");
+// Print Customer information
+String sql = "select customerId, firstName, lastName, email, phonenum, address, city, state, postalCode, country, userid, password FROM Customer WHERE userid = ?";
+
+NumberFormat currFormat = NumberFormat.getCurrencyInstance(Locale.US);
+
+try 
+{	
+	out.println("<h3>Customer Profile</h3>");
+	
+	getConnection();
+	PreparedStatement pstmt = con.prepareStatement(sql);
+	pstmt.setString(1, userName);	
+	ResultSet rst = pstmt.executeQuery();
+	
+	if (rst.next())
+	{
+		out.println("<table class=\"table\" border=\"1\">");
+		out.println("<tr><th>Id</th><td>"+rst.getString(1)+"</td></tr>");	
+		out.println("<tr><th>First Name</th><td>"+rst.getString(2)+"</td></tr>");
+		out.println("<tr><th>Last Name</th><td>"+rst.getString(3)+"</td></tr>");
+		out.println("<tr><th>Email</th><td>"+rst.getString(4)+"</td></tr>");
+		out.println("<tr><th>Phone</th><td>"+rst.getString(5)+"</td></tr>");
+		out.println("<tr><th>Address</th><td>"+rst.getString(6)+"</td></tr>");
+		out.println("<tr><th>City</th><td>"+rst.getString(7)+"</td></tr>");
+		out.println("<tr><th>State</th><td>"+rst.getString(8)+"</td></tr>");
+		out.println("<tr><th>Postal Code</th><td>"+rst.getString(9)+"</td></tr>");
+		out.println("<tr><th>Country</th><td>"+rst.getString(10)+"</td></tr>");
+		out.println("<tr><th>User id</th><td>"+rst.getString(11)+"</td></tr>");		
+		out.println("</table>");
+	}
 }
-
-out.println("</table>");
-con.close();
-// Make sure to close connection
+catch (SQLException ex) 
+{ 	out.println(ex); 
+}
+finally
+{	
+	closeConnection();	
+}
 %>
 
 </body>
 </html>
+
