@@ -57,8 +57,10 @@ else
 
 	// print out HTML to print out the shopping cart
 	out.println("<h1>Your Shopping Cart</h1>");
-	out.print("<table><tr><th>Product Id</th><th>Product Name</th><th>Quantity</th>");
-	out.println("<th>Price</th><th>Subtotal</th><th></th><th></th></tr>");
+//	out.print("<font face=\"Century Gothic\" size=\"2\"><table class=\"table\"><tr><th class=\"col-md-1\">ID</th><th>Name</th>");
+	//	out.println("<th>Quantity</th><th>Price</th><th>Subtotal</th></tr>");
+		out.print("<table><tr><th>Product Id</th><th>Product Name</th><th>Quantity</th>");
+			out.println("<th>Price</th><th>Subtotal</th><th></th><th></th></tr>");
 
 	int count = 0;
 	double total =0;
@@ -91,7 +93,7 @@ else
 		total = total +pr*qty;
 	}
 	// print out order total
-	out.println("<td><td colspan=\"4\" align=\"right\"><b>Order Total</b></td>"
+	out.println("<td><td colspan=\"3\" align=\"right\"><b>Order Total</b></td>"
 			+"<td align=\"right\">"+currFormat.format(total)+"</td></tr>");
 	out.println("</table>");
 	//give user option to check out

@@ -16,7 +16,7 @@
 // Get product name to search for
 String productId = request.getParameter("id");
 
-String sql = "SELECT productId, productName, productPrice, productImageURL, productImage FROM Product P  WHERE productId = ?";
+String sql = "SELECT productId, productName, productPrice, productImageURL, productImage, productDesc FROM Product P  WHERE productId = ?";
 
 NumberFormat currFormat = NumberFormat.getCurrencyInstance(Locale.US);
 
@@ -38,8 +38,9 @@ try
 		
 		int prodId = rst.getInt(1);
 		out.println("<table><tr>");
-		out.println("<th>Id</th><td>" + prodId + "</td></tr>"				
-				+ "<tr><th>Price</th><td>" + currFormat.format(rst.getDouble(3)) + "</td></tr>");
+		out.println("<th>Id: </th><td>" + prodId + "</td></tr>"				
+				+ "<tr><th>Price: </th><td>" + currFormat.format(rst.getDouble(3)) + "</td></tr>"
+				+ "<tr><th>Description: </th><td>" +rst.getString(6) + "</td></tr>");
 		
 		//  Retrieve any image with a URL
 		String imageLoc = rst.getString(4);
