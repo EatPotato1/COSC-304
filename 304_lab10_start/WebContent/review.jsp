@@ -14,19 +14,42 @@
 
 <% 
 String id = request.getParameter("id");
-int pid = Integer.valueOf(id);
+session.setAttribute("PID", id);
+
+String custId = request.getParameter("custId");
+session.setAttribute("cid", cid);
+
+
+String sql = "SELECT productName from product where productId = ?";
+
+try{
+	getConnection();
+	PreparedStatement pstmt = con.prepareStatement(sql);
+	pstmt.setInt(1, pid);
+	ResultSet rst = pstmt.executeQuery();
+	rst.next();
+		out.println("<h1>" + rst.getString(1)+ "</h1>");
+	
+} catch (SQLException ex) {
+	out.println(ex);
+}
+finally
+{
+	closeConnection();
+}
+
 %>
 
 <br>
-<form name="MyForm" method=post action="reviewSubmit.jsp">
+<form name="reviewForm" method=post action="reviewSubmit.jsp">
 <table style="display:inline">
 <tr>
-	<td><div align="middle"><font face="Arial, Helvetica, sans-serif" size="2">Your customer ID:</font></div></td>
-	<td><input type="text" name="ID"  size=5 maxlength=10></td>
+	<td><div align="right"><font face="Arial, Helvetica, sans-serif" size="2">Review from 0-10: </font></div></td>
+	<td><input type="text" name="review" size=5 maxlength="2"></td>
 </tr>
 <tr>
-	<td><div align="right"><font face="Arial, Helvetica, sans-serif" size="2">Review: </font></div></td>
-	<td><input type="text" name="review" size=100 maxlength="100"></td>
+	<td><div align="right"><font face="Arial, Helvetica, sans-serif" size="2">Review comments: </font></div></td>
+	<td><input type="text" name="reviewComment" size=100 maxlength="300"></td>
 </tr>
 </table>
 <br/>

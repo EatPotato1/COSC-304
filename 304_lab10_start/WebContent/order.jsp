@@ -104,6 +104,7 @@ try
                    int qty = ( (Integer)product.get(3)).intValue();
    				out.print("<td align=\"right\">"+currFormat.format(pr)+"</td>");
                   	out.print("<td align=\"right\">"+currFormat.format(pr*qty)+"</td></tr>");
+					  out.print("<td><a href=\"review.jsp?id="+productId+"&customerId="+custId+"\">Write a review</a></td>");
                    out.println("</tr>");
                    total = total +pr*qty;
 

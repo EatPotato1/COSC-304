@@ -15,6 +15,7 @@
 <%
 // Get product name to search for
 String productId = request.getParameter("id");
+int pid = Integer.parseInt(productId);
 
 String sql = "SELECT productId, productName, productPrice, productImageURL, productImage, productDesc FROM Product P  WHERE productId = ?";
 
@@ -51,9 +52,20 @@ try
 		String imageBinary = rst.getString(5);
 		if (imageBinary != null)
 			out.println("<img src=\"displayImage.jsp?id="+prodId+"\">");	
-		out.println("</table>");
 		
-		out.println("<h3><a href=\"review.jsp?id="+prodId+"\">Write a review</a></h3>");
+		out.println("<tr><th>User Reviews</th></tr>");
+		sql = "SELECT reviewRating, reviewDate, reviewComment FROM review WHERE productId = ?";
+		pstmt = con.prepareStatement(sql);
+		pstmt.setInt(1, pid);
+		rst = pstmt.executeQuery();
+		if(rst.next()){
+			out.println("<tr><th>Rating:</th><td>" + rst.getInt(1)+  "</td><th>Date: </th><td>" + rst.getString(2) +"</td></tr>");
+			out.print("<tr><th>Review</th><td>" + rst.getString(3) +"</td></tr>");
+
+		}
+		
+		out.println("</table>");
+
 
 		out.println("<h3><a href=\"addcart.jsp?id="+prodId+ "&name=" + rst.getString(2)
 								+ "&price=" + rst.getDouble(3)+"\">Add to Cart</a></h3>");		

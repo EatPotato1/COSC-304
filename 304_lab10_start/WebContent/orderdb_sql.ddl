@@ -72,15 +72,6 @@ CREATE TABLE product (
     FOREIGN KEY (categoryId) REFERENCES category(categoryId)
 );
 
-CREATE TABLE productReview (
-    productId         INT IDENTITY,
-    customerId        INT IDENTITY,    
-    review            VARCHAR(100),
-    PRIMARY KEY (productId, customerId),
-    FOREIGN KEY (productId) REFERENCES product(productId),
-    FOREIGN KEY (customerId) REFERENCES customer(customerId)
-
-);
 
 CREATE TABLE orderproduct (
     orderId             INT,
