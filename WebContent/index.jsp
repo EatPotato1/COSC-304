@@ -4,8 +4,7 @@
 <head>
         <title>Krocs Main Page</title>
 
-<body id = "body" style = "background-color:rgb(26, 167, 26);" 
-body onload="changeBackground();">
+<body id = "body" style = "background-color:rgb(26, 167, 26);" ></body>
 </body>
 <style>
       
