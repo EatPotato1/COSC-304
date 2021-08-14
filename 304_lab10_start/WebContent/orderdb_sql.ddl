@@ -4,6 +4,7 @@ DROP TABLE productinventory;
 DROP TABLE warehouse;
 DROP TABLE orderproduct;
 DROP TABLE incart;
+DROP TABLE review;
 DROP TABLE product;
 DROP TABLE category;
 DROP TABLE ordersummary;
@@ -69,6 +70,16 @@ CREATE TABLE product (
     categoryId          INT,
     PRIMARY KEY (productId),
     FOREIGN KEY (categoryId) REFERENCES category(categoryId)
+);
+
+CREATE TABLE productReview (
+    productId         INT IDENTITY,
+    customerId        INT IDENTITY,    
+    review            VARCHAR(100),
+    PRIMARY KEY (productId, customerId),
+    FOREIGN KEY (productId) REFERENCES product(productId),
+    FOREIGN KEY (customerId) REFERENCES customer(customerId)
+
 );
 
 CREATE TABLE orderproduct (

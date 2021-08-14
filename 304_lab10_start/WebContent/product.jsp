@@ -53,6 +53,7 @@ try
 			out.println("<img src=\"displayImage.jsp?id="+prodId+"\">");	
 		out.println("</table>");
 		
+		out.println("<h3><a href=\"review.jsp?id="+prodId+"\">Write a review</a></h3>");
 
 		out.println("<h3><a href=\"addcart.jsp?id="+prodId+ "&name=" + rst.getString(2)
 								+ "&price=" + rst.getDouble(3)+"\">Add to Cart</a></h3>");		
