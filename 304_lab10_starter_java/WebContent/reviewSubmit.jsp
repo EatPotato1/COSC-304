@@ -13,12 +13,11 @@
 
 <%
 String sql = ""; 
-String userID = session.getAttribute("cid");
-cid = Integer.valueOf(userID);
+String userID = session.getAttribute("cid").toString();
+int cid = Integer.valueOf(userID);
 
-String productID = session.getAttribute("PID");
+String productID = session.getAttribute("PID").toString();
 int pid = Integer.valueOf(productID);
-
 
 String Review = request.getParameter("review");
 int rv = -1;
@@ -47,7 +46,7 @@ try
     pstmt.setInt(1, cid);
     pstmt.setInt(2, pid);
 
-    resultSet rst = pstmt.executeQuery();
+    ResultSet rst = pstmt.executeQuery();
     if(rst.next()){
         out.println("<h1>You have already submitted a review for this product</h1>");
         return;

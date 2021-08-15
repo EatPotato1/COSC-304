@@ -14,10 +14,11 @@
 
 <% 
 String id = request.getParameter("id");
+int pid = Integer.valueOf(id);
 session.setAttribute("PID", id);
 
-String custId = request.getParameter("custId");
-session.setAttribute("cid", cid);
+String custId = request.getParameter("customerId");
+session.setAttribute("cid", custId);
 
 
 String sql = "SELECT productName from product where productId = ?";
