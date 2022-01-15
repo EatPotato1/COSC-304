@@ -17,7 +17,8 @@
 
 <% // Get product name to search for
 String name = request.getParameter("productName");
-		
+String sqltest = "SELECT productName , productPrice FROM product Where productName like '%?%' ";	
+
 //Note: Forces loading of SQL Server driver
 try
 {	// Load driver class
@@ -36,18 +37,24 @@ String pw = "YourStrong@Passw0rd";
 try ( Connection con = DriverManager.getConnection(url, uid, pw);
       Statement stmt = con.createStatement();) 
 {		
-	String sql = "SELECT productName , productPrice FROM product"; 
-	
-	String sql2 = "SELECT productName , productPrice FROM product WHERE productName LIKE ?";
-	PreparedStatement pstmt = con.prepareStatement(sql2);
-	pstmt.setString(1, "%" + name + "%"); 
+	if(name == null) {
+		sqltest = "SELECT productName , productPrice FROM product";
+		PreparedStatement pstmt = con.prepareStatement(sqltest);
+	}else{
+		sqltest = "SELECT productName , productPrice FROM product Where productName like '%?%' ";
+		PreparedStatement pstmt = con.prepareStatement(sqltest);
+		pstmt.setString(1, name);
+	}
+
+	PreparedStatement pstmt = con.prepareStatement(sqltest);
 	ResultSet rst = pstmt.executeQuery();
 
 	out.println("<table><tr><th>product</th><th>price</th></tr>");	
 	while (rst.next())
 	{		out.println("<tr><td>"+rst.getString(1)+"</td>"+"<td>"+rst.getDouble(2)+"</td></tr>");
-	}
 
+	}
+	
 }
 catch (SQLException ex) 
 { 	out.println(ex); 
